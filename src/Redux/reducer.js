@@ -6,7 +6,7 @@ import {
 
 const initialState = {
   countries: [],
-  isLoading: false,
+  isLoading: true,
   isError: false,
 };
 
@@ -17,7 +17,7 @@ export const reducer = (state = initialState, { type, payload }) => {
     case GET_COUNTRIES_FAILURE:
       return {
         ...state,
-        isError: true,
+        isError: false,
       };
     case GET_COUNTRIES_SUCCESS:
       return {

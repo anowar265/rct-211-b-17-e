@@ -17,7 +17,6 @@ import { store } from "../Redux/store";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { getCountryRequest } from "../Redux/action";
-import { type } from "@testing-library/user-event/dist/type";
 import { Link } from "react-router-dom";
 
 const Homepage = () => {
@@ -28,15 +27,15 @@ const Homepage = () => {
     sortBy: "",
     types: 1,
   });
-
+  console.log(store.getState());
   useEffect(() => {
     getCountry();
   }, []);
 
   const getCountry = () => {
-    axios
-      .get("http://localhost:8080/countries")
-      .then(({ data }) => dispatch(getCountryRequest(data)));
+    axios.get("http://localhost:8080/countries").then(({ data }) => {
+      dispatch(getCountryRequest(data));
+    });
   };
 
   const handleDelete = (id) => {
@@ -46,6 +45,8 @@ const Homepage = () => {
   const handleChange = (sortBy, types) => {
     setSorting({ sortBy, types });
   };
+
+  console.log(store.getState());
   return (
     <Box>
       <Flex padding="0 1rem" mb="2rem">
@@ -86,7 +87,16 @@ const Homepage = () => {
               <Th>Delete</Th>
             </Tr>
           </Thead>
-          <Tbody data-cy="table-body">
+        </Table>
+      </TableContainer>
+    </Box>
+  );
+};
+
+export default Homepage;
+
+{
+  /* <Tbody data-cy="table-body">
             {countries
               .sort((a, b) =>
                 sorting.types === 1
@@ -114,11 +124,5 @@ const Homepage = () => {
                   </Th>
                 </Tr>
               ))}
-          </Tbody>
-        </Table>
-      </TableContainer>
-    </Box>
-  );
-};
-
-export default Homepage;
+          </Tbody> */
+}
