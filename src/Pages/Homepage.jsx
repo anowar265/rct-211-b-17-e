@@ -16,7 +16,7 @@ import React, { useEffect, useState } from "react";
 import { store } from "../Redux/store";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
-import { getCountryRequest } from "../Redux/action";
+import { getCountryRequest, getCountrySuccess } from "../Redux/action";
 import { Link } from "react-router-dom";
 
 const Homepage = () => {
@@ -27,12 +27,13 @@ const Homepage = () => {
     sortBy: "",
     types: 1,
   });
-  console.log(store.getState());
+
   useEffect(() => {
     getCountry();
   }, []);
 
   const getCountry = () => {
+    dispatch(getCountrySuccess());
     axios.get("http://localhost:8080/countries").then(({ data }) => {
       dispatch(getCountryRequest(data));
     });
@@ -46,7 +47,6 @@ const Homepage = () => {
     setSorting({ sortBy, types });
   };
 
-  console.log(store.getState());
   return (
     <Box>
       <Flex padding="0 1rem" mb="2rem">
@@ -87,6 +87,39 @@ const Homepage = () => {
               <Th>Delete</Th>
             </Tr>
           </Thead>
+          {
+            <Tbody data-cy="table-body">
+              {countries
+                .sort((a, b) =>
+                  sorting.sortBy === "population"
+                    ? sorting.types === 1
+                      ? a.population - b.population
+                      : b.population - a.population
+                    : " "
+                )
+                .map((e) => (
+                  <Tr key={e.id}>
+                    <Th>{e.country}</Th>
+                    <Th>{e.city}</Th>
+                    <Th>{e.population}</Th>
+                    <Th>
+                      <Link to={`/country/${e.id}`} key={e.id}>
+                        <button {...e}>Edit</button>
+                      </Link>
+                    </Th>
+                    <Th>
+                      <button
+                        onClick={() => {
+                          handleDelete(e.id);
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </Th>
+                  </Tr>
+                ))}
+            </Tbody>
+          }
         </Table>
       </TableContainer>
     </Box>
