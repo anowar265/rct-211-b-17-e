@@ -7,26 +7,28 @@ import {
   UPDATE_COUNTRY_SUCCESS,
 } from "./actionTypes";
 
-export const getCountryRequest = (payload) => {
-  return { type: GET_COUNTRIES_REQUEST, payload };
+export const getCountryRequest = () => {
+  return { type: GET_COUNTRIES_REQUEST };
 };
 
 export const getCountryFailure = () => ({
   type: GET_COUNTRIES_FAILURE,
 });
 
-export const getCountrySuccess = () => ({
+export const getCountrySuccess = (payload) => ({
   type: GET_COUNTRIES_SUCCESS,
+  payload,
 });
 
-export const updateCountryRequest = (payload) => {
-  return { type: GET_COUNTRIES_REQUEST, payload };
+export const updateCountryRequest = () => {
+  return { type: UPDATE_COUNTRY_REQUEST };
 };
 
 export const updateCountryFailure = () => ({
-  type: GET_COUNTRIES_FAILURE,
+  type: UPDATE_COUNTRY_FAILURE,
 });
 
-export const updateCountrySuccess = () => ({
-  type: GET_COUNTRIES_SUCCESS,
+export const updateCountrySuccess = (payload) => ({
+  type: UPDATE_COUNTRY_SUCCESS,
+  payload,
 });

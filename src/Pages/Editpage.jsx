@@ -9,14 +9,21 @@ import {
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
-import { updateCountrySuccess } from "../Redux/action";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  getCountryRequest,
+  updateCountryFailure,
+  updateCountryRequest,
+  updateCountrySuccess,
+} from "../Redux/action";
 
 export const Editpage = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
-  const { countries, isLoading, isError } = useSelector((store) => store);
+  const countries = useSelector((store) => store.countries);
   const navigate = useNavigate();
+
+  const [currentCountry, setCurrentCountry] = useState({});
 
   const [showCountry, setShowCountry] = useState([]);
 
@@ -27,10 +34,13 @@ export const Editpage = () => {
 
   useEffect(() => {
     getData();
-  }, []);
+
+    let currentCountry = countries?.find((item) => item.id === Number(id));
+    currentCountry && setCurrentCountry(currentCountry);
+  }, [countries, id]);
 
   const getData = () => {
-    dispatch(updateCountrySuccess());
+    dispatch(getCountryRequest());
     axios
       .get(`http://localhost:8080/countries/${id}`)
       .then(({ data }) => setShowCountry(data));
@@ -41,16 +51,21 @@ export const Editpage = () => {
     setLoadCountry({ ...loadCountry, [name]: e.target.value });
   };
 
-  const handleUpdate = (e) => {
-    axios.put(`http://localhost:8080/countries/${id}`, loadCountry).then(() => {
-      navigate("/");
-    });
-    console.log(loadCountry);
+  const handleUpdate = (id, newCity, newPopulation) => {
+    dispatch(updateCountryRequest());
+    axios
+      .patch(`http://localhost:8080/countries/${id}`, {
+        city: loadCountry.city || newCity,
+        population: loadCountry.population || newPopulation,
+      })
+      .then(({ data }) => {
+        dispatch(updateCountrySuccess(data));
+        navigate("/");
+      })
+      .catch((err) => dispatch(updateCountryFailure()));
   };
 
-  return isLoading ? (
-    ""
-  ) : (
+  return (
     <Box>
       <Heading>Edit Page</Heading>
       <Box>
@@ -59,7 +74,7 @@ export const Editpage = () => {
           data-cy="capital-city"
           name="city"
           onChange={handleChange}
-          defaultValue={showCountry.city}
+          defaultValue={showCountry.city || currentCountry.city}
         />
       </Box>
       <Box>
@@ -68,11 +83,20 @@ export const Editpage = () => {
           data-cy="population"
           name="population"
           onChange={handleChange}
-          defaultValue={showCountry.population}
+          defaultValue={currentCountry.population || showCountry.population}
           type="number"
         />
       </Box>
-      <Button data-cy="update-button" onClick={handleUpdate}>
+      <Button
+        data-cy="update-button"
+        onClick={() => {
+          handleUpdate(
+            currentCountry.id,
+            currentCountry.city,
+            currentCountry.population
+          );
+        }}
+      >
         Update
       </Button>
     </Box>

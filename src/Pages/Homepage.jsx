@@ -16,7 +16,11 @@ import React, { useEffect, useState } from "react";
 import { store } from "../Redux/store";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
-import { getCountryRequest, getCountrySuccess } from "../Redux/action";
+import {
+  getCountryFailure,
+  getCountryRequest,
+  getCountrySuccess,
+} from "../Redux/action";
 import { Link } from "react-router-dom";
 
 const Homepage = () => {
@@ -33,10 +37,13 @@ const Homepage = () => {
   }, []);
 
   const getCountry = () => {
-    dispatch(getCountrySuccess());
-    axios.get("http://localhost:8080/countries").then(({ data }) => {
-      dispatch(getCountryRequest(data));
-    });
+    dispatch(getCountryRequest());
+    axios
+      .get("http://localhost:8080/countries")
+      .then(({ data }) => {
+        dispatch(getCountrySuccess(data));
+      })
+      .catch((err) => dispatch(getCountryFailure()));
   };
 
   const handleDelete = (id) => {
@@ -47,7 +54,9 @@ const Homepage = () => {
     setSorting({ sortBy, types });
   };
 
-  return (
+  return isLoading ? (
+    ""
+  ) : (
     <Box>
       <Flex padding="0 1rem" mb="2rem">
         <Text fontWeight="700" paddingRight="1rem">
@@ -90,7 +99,7 @@ const Homepage = () => {
           {
             <Tbody data-cy="table-body">
               {countries
-                .sort((a, b) =>
+                ?.sort((a, b) =>
                   sorting.sortBy === "population"
                     ? sorting.types === 1
                       ? a.population - b.population
@@ -104,7 +113,7 @@ const Homepage = () => {
                     <Th>{e.population}</Th>
                     <Th>
                       <Link to={`/country/${e.id}`} key={e.id}>
-                        <button {...e}>Edit</button>
+                        <button>Edit</button>
                       </Link>
                     </Th>
                     <Th>

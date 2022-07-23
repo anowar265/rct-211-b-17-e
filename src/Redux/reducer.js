@@ -9,36 +9,44 @@ import {
 
 const initialState = {
   countries: [],
-  isLoading: true,
+  isLoading: false,
   isError: false,
 };
 
 export const reducer = (store = initialState, { type, payload }) => {
   switch (type) {
     case GET_COUNTRIES_REQUEST:
-      return { ...store, countries: payload };
-    case GET_COUNTRIES_FAILURE:
-      return {
-        ...store,
-        isError: false,
-      };
+      return { ...store, isLoading: true };
     case GET_COUNTRIES_SUCCESS:
       return {
         ...store,
+        countries: payload,
         isLoading: false,
       };
+    case GET_COUNTRIES_FAILURE:
+      return {
+        ...store,
+        isError: true,
+      };
+
     case UPDATE_COUNTRY_REQUEST:
-      return { ...store, countries: payload };
+      return { ...store, isLoading: true };
+
+    case UPDATE_COUNTRY_SUCCESS:
+      let newCountries = store.countries.map((item) =>
+        item.id === payload.id ? payload : item
+      );
+      return {
+        ...store,
+        countries: newCountries,
+        isLoading: false,
+      };
     case UPDATE_COUNTRY_FAILURE:
       return {
         ...store,
-        isError: false,
+        isError: true,
       };
-    case UPDATE_COUNTRY_SUCCESS:
-      return {
-        ...store,
-        isLoading: false,
-      };
+
     default:
       return { ...store };
   }

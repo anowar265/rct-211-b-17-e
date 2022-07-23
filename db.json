@@ -3,14 +3,14 @@
     {
       "id": 1,
       "country": "India",
-      "city": "Delhi",
-      "population": 19000000
+      "city": "New-Delhi",
+      "population": "19000000"
     },
     {
       "id": 2,
       "country": "SriLanka",
       "city": "Colombo",
-      "population": 450984
+      "population": "45098"
     },
     {
       "id": 3,
